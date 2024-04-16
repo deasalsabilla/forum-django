@@ -1,0 +1,125 @@
+<!-- Button trigger modal -->
+<button
+  type="button"
+  class="btn btn-primary post"
+  data-bs-toggle="modal"
+  data-bs-target="#exampleModal"
+>
+  <i class="fas fa-plus"></i> Buat Posting
+</button>
+
+<!-- Modal -->
+<div
+  class="modal fade"
+  id="exampleModal"
+  tabindex="-1"
+  aria-labelledby="exampleModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content text-black">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Buat Posting</h1>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <form action="{% url 'buatPost' %}" method="post">
+        {% csrf_token %}
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="judul" class="form-label">Judul</label>
+            <input
+              type="text"
+              name="judul"
+              class="form-control"
+              id="judul"
+              placeholder="Masukkan Judul"
+            />
+          </div>
+          <div class="mb-3">
+            <label for="deskripsi" class="form-label">Deskripsi</label>
+            <textarea
+              class="form-control"
+              name="deskripsi"
+              id="deskripsi"
+              rows="3"
+              placeholder="Masukkan Deskripsi"
+            ></textarea>
+          </div>
+          <div class="mb-3">
+            <label for="semester">Kategori Materi</label>
+            <select
+              class="form-select"
+              id="semester"
+              name="semester"
+              aria-label="Default select example"
+            >
+              <option value="">-- Pilih Kategori --</option>
+              {% for kategori in kategori_materi %}
+              <option value="{{ kategori.id }}">{{ kategori.nama }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="matakuliah">Mata Kuliah</label>
+            <select
+              class="form-select"
+              id="matakuliah"
+              name="matakuliah"
+              aria-label="Default select example"
+            >
+              <option value="">-- Pilih Mata Kuliah --</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            data-bs-dismiss="modal"
+          >
+            Close
+          </button>
+          <button type="submit" class="btn btn-primary">
+            Save changes
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Fungsi untuk mengambil dan menampilkan mata kuliah berdasarkan semester
+  function populateMataKuliah() {
+    var semester_id = document.getElementById("semester").value;
+    var matakuliahSelect = document.getElementById("matakuliah");
+    // Bersihkan pilihan mata kuliah sebelumnya
+    matakuliahSelect.innerHTML =
+      '<option value="">-- Pilih Mata Kuliah --</option>';
+    // Jika semester dipilih
+    if (semester_id) {
+      // Kirim permintaan AJAX
+      fetch("/get-mata-kuliah/?semester_id=" + semester_id)
+        .then((response) => response.json())
+        .then((data) => {
+          // Tambahkan pilihan mata kuliah ke dalam select
+          data.forEach(function (matakuliah) {
+            var option = document.createElement("option");
+            option.value = matakuliah.id;
+            option.text = matakuliah.nama;
+            matakuliahSelect.appendChild(option);
+          });
+        });
+    }
+  }
+
+  // Tambahkan event listener untuk memanggil fungsi saat pilihan semester berubah
+  document
+    .getElementById("semester")
+    .addEventListener("change", populateMataKuliah);
+</script>

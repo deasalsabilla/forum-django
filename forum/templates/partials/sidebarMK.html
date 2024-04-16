@@ -1,0 +1,45 @@
+<!-- sidebarMK.html -->
+<div class="col-md-4">
+  <!-- Sidebar -->
+  <div class="card sidebar" style="max-height: 500px; overflow-y: auto">
+    <div class="card-body">
+      <h3 class="card-title" style="padding-left: 20px">Materi Kuliah</h3>
+
+      <div class="accordion" id="semesterAccordion">
+        {% for kategori in kategori_materi %}
+        <div class="accordion-item mb-3">
+          <h2 class="accordion-header" id="semester{{ kategori.id }}Heading">
+            <button
+              class="accordion-button"
+              type="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#semester{{ kategori.id }}Collapse"
+              aria-expanded="true"
+              aria-controls="semester{{ kategori.id }}Collapse"
+            >
+              {{ kategori.nama }}
+            </button>
+          </h2>
+          <div
+            id="semester{{ kategori.id }}Collapse"
+            class="accordion-collapse collapse show"
+            aria-labelledby="semester{{ kategori.id }}Heading"
+            data-bs-parent="#semesterAccordion"
+          >
+            <div class="accordion-body">
+              <ul>
+                <li><a href="">All</a></li>
+                {% for mk in mata_kuliah %}
+                  {% if mk.semester == kategori %}
+                    <li><a href="#">{{ mk.nama }}</a></li>
+                  {% endif %}
+                {% endfor %}
+              </ul>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
