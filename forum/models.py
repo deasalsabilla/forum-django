@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils import timezone
 
 class KatMateri(models.Model):
     id = models.AutoField(primary_key=True)
@@ -30,6 +31,7 @@ class MataKuliah(models.Model):
 
 class Post(models.Model):
     id = models.AutoField(primary_key=True)
+    gambar = models.ImageField(blank=True, null=True, upload_to='uploads/')
     judul = models.CharField(max_length=100)
     deskripsi = models.CharField(max_length=100)
     semester = models.ForeignKey(KatMateri, on_delete=models.CASCADE)
@@ -45,3 +47,13 @@ class Post(models.Model):
         verbose_name_plural = "Posting"
         ordering = ['id']
         
+class Comment(models.Model):
+    post = models.ForeignKey(Post, related_name='comments', on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    content = models.TextField()
+    created_at = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return f'Comment by {self.user.username} on {self.post.judul}'
+    class Meta:
+        verbose_name_plural = "Comment"
