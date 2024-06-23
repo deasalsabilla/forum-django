@@ -14,8 +14,8 @@ urlpatterns = [
     path('get-mata-kuliah/', views.get_mata_kuliah, name='get_mata_kuliah'),
     path('buat-posting/', views.buat_post, name='buatPost'),
     path('materi-kuliah/detail-posting/<int:post_id>/', views.detail_post, name='detailPost'),
-    path('post/<int:post_id>/add_comment/', views.add_comment, name='add_comment'),
-    path('proyek-kolaboratif/', views.proyek_kolaboratif, name='proyekkolaboratif'),
+    path('add_comment/<int:post_id>/', views.add_comment, name='add_comment'),
+    path('delete_comment/', views.delete_comment, name='delete_comment'),
     path('unduh_galeri/<path>', views.unduh_galeri, name='unduh_galeri'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

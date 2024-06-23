@@ -8,6 +8,7 @@ from django.contrib.auth import logout as django_logout
 from django.http import HttpResponse, Http404
 import os
 from django.utils import timezone
+from django.views.decorators.http import require_POST
 from django.conf import settings
 from django.core.files.storage import FileSystemStorage
 
@@ -125,6 +126,16 @@ def add_comment(request, post_id):
                     'created_at': comment.created_at.strftime('%d %B %Y %H:%M')
                 }
                 return JsonResponse(response)
+    return redirect('detail_post', post_id=post_id)
+
+@require_POST
+def delete_comment(request):
+    comment_id = request.POST.get('comment_id')
+    comment = get_object_or_404(Comment, id=comment_id, user=request.user)
+    post_id = comment.post.id
+    comment.delete()
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        return JsonResponse({'success': True})
     return redirect('detail_post', post_id=post_id)
 
 def unduh_galeri(request, path):

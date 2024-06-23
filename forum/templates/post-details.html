@@ -59,10 +59,13 @@
                 <div id="comments-container">
                     {% if post.comments.all %}
                         {% for comment in post.comments.all %}
-                            <div class="mb-3">
+                            <div class="mb-3" id="comment-{{ comment.id }}">
                                 <strong>{{ comment.user.username }}</strong>
                                 <p>{{ comment.content }}</p>
+                                <a href="#" class="delete-comment" data-comment-id="{{ comment.id }}">Hapus</a>
+                                <br>
                                 <small class="text-muted">{{ comment.created_at|date:"d F Y H:i" }}</small>
+                                
                             </div>
                         {% endfor %}
                     {% else %}
@@ -91,6 +94,27 @@
                     if (response.success) {
                         alert('Berhasil menambahkan komentar');
                         location.reload();
+                    }
+                });
+            });
+
+            $('.delete-comment').click(function(event) {
+                event.preventDefault();
+                var commentId = $(this).data('comment-id');
+                var url = `{% url 'delete_comment' %}`.replace('0', commentId);
+
+                $.ajax({
+                    url: url,
+                    type: 'POST',
+                    data: {
+                        'comment_id': commentId,
+                        'csrfmiddlewaretoken': '{{ csrf_token }}'
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            alert('Berhasil menghapus komentar');
+                            location.reload();
+                        }
                     }
                 });
             });
