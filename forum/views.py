@@ -7,13 +7,28 @@ from django.http import JsonResponse
 from django.contrib.auth import logout as django_logout
 from django.http import HttpResponse, Http404
 import os
+from django.contrib import messages
 from django.utils import timezone
 from django.views.decorators.http import require_POST
 from django.conf import settings
 from django.core.files.storage import FileSystemStorage
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+
 
 def home(request):
     return render(request, 'index.html')
+
+def contact(request):
+    return render(request, 'contact.html')
+
+@login_required(login_url='/login/')
+def mypost(request):
+    posts = Post.objects.filter(pengguna=request.user)
+    context = {
+        'posts': posts,
+    }
+    return render(request, 'mypost.html', context)
+
 
 def detail_post(request, post_id):
     post = get_object_or_404(Post, pk=post_id)
@@ -22,8 +37,32 @@ def detail_post(request, post_id):
     }
     return render(request, 'post-details.html', context)
 
-def proyek_kolaboratif(request):
-    return render(request,'proyek-kolaboratif.html')
+def edit_post(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+
+    if request.method == 'POST':
+        try:
+            # Check if a new image is uploaded
+            if 'gambar' in request.FILES:
+                post.gambar = request.FILES['gambar']
+
+            # Update judul and deskripsi
+            post.judul = request.POST.get('judul', post.judul)
+            post.deskripsi = request.POST.get('deskripsi', post.deskripsi)
+
+            post.save()
+
+            # Set a flag or variable to indicate success
+            request.session['edit_success'] = True
+
+            return redirect('materiKuliah')  # Ganti 'materiKuliah' dengan nama URL untuk halaman sukses
+        except Exception as e:
+            # Optionally, handle specific exceptions here if needed
+            print(f'Gagal mengubah data. Kesalahan: {e}')
+            messages.error(request, f'Gagal mengubah data. Kesalahan: {e}')
+            return redirect('edit_post', post_id=post.id)
+
+    return render(request, 'edit.html', {'post': post})
 
 def login_view(request):
     if request.method == 'POST':
@@ -43,7 +82,19 @@ def logout_user(request):
     return redirect('login')
 
 def materiKuliah(request):
-    posts = Post.objects.all()
+    posts_list = Post.objects.all()
+    paginator = Paginator(posts_list, 5)  # Show 5 posts per page
+
+    page = request.GET.get('page')
+    try:
+        posts = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        posts = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g., 9999), deliver last page of results.
+        posts = paginator.page(paginator.num_pages)
+
     kategori_materi = KatMateri.objects.all()
     mata_kuliah = MataKuliah.objects.all()
     context = {
@@ -52,7 +103,6 @@ def materiKuliah(request):
         'mata_kuliah': mata_kuliah,
     }
     return render(request, 'materiKuliah.html', context)
-
 def get_mata_kuliah(request):
     semester_id = request.GET.get('semester_id')
     mk_id = request.GET.get('mk_id')

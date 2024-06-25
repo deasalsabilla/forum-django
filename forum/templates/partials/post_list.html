@@ -1,23 +1,23 @@
-{% if posts %}
-  {% for post in posts %}
-  <div class="card post-content mb-3">
-    <div class="card-body">
-      <h5 class="card-title">{{ post.judul }}</h5>
-      <p class="card-text">{{ post.deskripsi|slice:":150" }}</p>
-      <a href="{% url 'detailPost' post.id %}" class="btn btn-primary">Baca Selengkapnya</a>
-    </div>
-    <div class="card-footer text-muted">
-      <div class="d-flex justify-content-between">
-        <div>Diposting pada: {{ post.created_at|date:"d F Y" }}</div>
-        <div>{{ post.pengguna.username }}</div>
-      </div>
+{% if posts %} {% for post in posts %}
+<div class="card post-content mb-3">
+  <div class="card-body">
+    <h5 class="card-title">{{ post.judul }}</h5>
+    <p class="card-text">{{ post.deskripsi|slice:":150" }}</p>
+    <a href="{% url 'detailPost' post.id %}" class="btn btn-primary"
+      >Baca Selengkapnya</a
+    >
+  </div>
+  <div class="card-footer text-muted">
+    <div class="d-flex justify-content-between">
+      <div>Diposting pada: {{ post.created_at|date:"d F Y" }}</div>
+      <div>{{ post.pengguna.username }}</div>
     </div>
   </div>
-  {% endfor %}
-{% else %}
-  <div class="card post-content mb-3">
-    <div class="card-body">
-      <p>Belum ada postingan.</p>
-    </div>
+</div>
+{% endfor %} {% else %}
+<div class="card post-content mb-3">
+  <div class="card-body">
+    <p>Belum ada postingan.</p>
   </div>
+</div>
 {% endif %}

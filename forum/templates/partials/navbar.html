@@ -32,7 +32,7 @@
         </div>
       </div> {% endcomment %}
       <a href="https://www.sttrcepu.ac.id/informatikas1/home" target="_blank" class="nav-item nav-link">Blog</a>
-      <a href="contact.html" class="nav-item nav-link">Contact Us</a>
+      <a href="{% url 'contact' %}" class="nav-item nav-link">Contact Us</a>
     </div>
 
     {% load static %} {% if user.is_authenticated %}
@@ -60,9 +60,9 @@
         class="dropdown-menu dropdown-menu-end shadow animated--grow-in"
         aria-labelledby="userDropdown"
       >
-        <a class="dropdown-item" href="#">
+        <a class="dropdown-item" href="{% url 'mypost' %}">
           <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
-          Profile
+          My Posts
         </a>
         <a class="dropdown-item" href="#">
           <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
