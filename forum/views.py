@@ -39,6 +39,7 @@ def detail_post(request, post_id):
 
 def edit_post(request, post_id):
     post = get_object_or_404(Post, id=post_id)
+    edit_success = request.session.pop('edit_success', False)  # Get and remove the flag from session
 
     if request.method == 'POST':
         try:
@@ -54,15 +55,14 @@ def edit_post(request, post_id):
 
             # Set a flag or variable to indicate success
             request.session['edit_success'] = True
-
-            return redirect('materiKuliah')  # Ganti 'materiKuliah' dengan nama URL untuk halaman sukses
+            return redirect('edit_post', post_id=post.id)
         except Exception as e:
             # Optionally, handle specific exceptions here if needed
             print(f'Gagal mengubah data. Kesalahan: {e}')
             messages.error(request, f'Gagal mengubah data. Kesalahan: {e}')
             return redirect('edit_post', post_id=post.id)
 
-    return render(request, 'edit.html', {'post': post})
+    return render(request, 'edit.html', {'post': post, 'edit_success': edit_success})
 
 def login_view(request):
     if request.method == 'POST':
@@ -135,7 +135,7 @@ def register(request):
             return render(request, 'register.html', {'error': 'Passwords do not match'})
     else:
         return render(request, 'register.html')
-    
+
 @login_required(login_url='/login/')
 def buat_post(request):
     if request.method == 'POST':
@@ -144,22 +144,29 @@ def buat_post(request):
         semester_id = request.POST.get('semester')
         matkul_id = request.POST.get('matakuliah')
         gambar = request.FILES.get('gambar')
+
         if judul and deskripsi and semester_id and matkul_id:
             try:
                 semester = KatMateri.objects.get(id=semester_id)
                 matkul = MataKuliah.objects.get(id=matkul_id)
                 post = Post(judul=judul, deskripsi=deskripsi, semester=semester, matkul=matkul, pengguna=request.user)
+
                 if gambar:
                     post.gambar = gambar
+
                 post.save()
-                return redirect('materiKuliah')
+                request.session['create_success'] = True  # Set success flag
+                return redirect('materiKuliah')  # Redirect to the same view to display the success message
             except (KatMateri.DoesNotExist, MataKuliah.DoesNotExist):
                 return render(request, 'error.html', {'error_message': 'Data tidak valid'})
         else:
             return render(request, 'error.html', {'error_message': 'Formulir tidak lengkap'})
     else:
-        return render(request, 'buatPosting.html') 
-
+        create_success = request.session.pop('create_success', False)  # Retrieve and remove the flag from the session
+        return render(request, 'buatPosting.html', {
+            'kategori_materi': KatMateri.objects.all(),
+            'create_success': create_success
+        })        
 def add_comment(request, post_id):
     if request.method == 'POST':
         comment_content = request.POST.get('comment')
@@ -187,6 +194,18 @@ def delete_comment(request):
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
         return JsonResponse({'success': True})
     return redirect('detail_post', post_id=post_id)
+
+@require_POST
+@login_required
+def delete_post(request, post_id):
+    try:
+        post = get_object_or_404(Post, id=post_id, pengguna=request.user)
+        post.delete()
+        return JsonResponse({'success': True})
+    except Post.DoesNotExist:
+        return JsonResponse({'success': False, 'message': 'Post does not exist'})
+    except Exception as e:
+        return JsonResponse({'success': False, 'message': str(e)})
 
 def unduh_galeri(request, path):
     file_path = os.path.join(settings.MEDIA_ROOT, path)

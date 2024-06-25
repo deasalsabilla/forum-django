@@ -19,6 +19,7 @@ urlpatterns = [
     path('materi-kuliah/detail-posting/<int:post_id>/', views.detail_post, name='detailPost'),
     path('add_comment/<int:post_id>/', views.add_comment, name='add_comment'),
     path('delete_comment/', views.delete_comment, name='delete_comment'),
+    path('delete-post/<int:post_id>/', views.delete_post, name='delete_post'),
     path('unduh_galeri/<path>', views.unduh_galeri, name='unduh_galeri'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

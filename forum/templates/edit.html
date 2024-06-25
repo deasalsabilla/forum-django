@@ -56,6 +56,16 @@
           <div class="col-lg-6 wow fadeInRight" data-wow-delay="0.4s">
             <div class="appointment-form rounded p-5">
               <h1 class="display-5 mb-4">Edit Postingan</h1>
+              {% if messages %}
+                <div>
+                  {% for message in messages %}
+                    <div class="alert {% if message.tags %}
+                        alert-{{ message.tags }}
+                      {% endif %}">{{ message }}</div>
+                  {% endfor %}
+                </div>
+              {% endif %}
+
               <form method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 <div class="row gy-3 gx-4">
@@ -115,32 +125,12 @@
     <script src="{% static 'js/main.js' %}"></script>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const editForm = document.getElementById('editForm');
-            editForm.addEventListener('submit', function(event) {
-                event.preventDefault();
-                
-                // Simulasi proses pengiriman data ke server
-                const formData = new FormData(editForm);
-                fetch(editForm.getAttribute('action'), {
-                    method: 'POST',
-                    body: formData
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        alert('Data berhasil diubah.');
-                        window.location.href = '{% url 'materiKuliah' %}';
-                    } else {
-                        alert('Gagal mengubah data. Silakan coba lagi.');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('Terjadi kesalahan saat menghubungi server. Silakan coba lagi.');
-                });
-            });
-        });
-    </script>
+        // Check for edit success flag in session
+        {% if edit_success %}
+          // Display alert and redirect on OK
+          alert('Data berhasil diubah');
+          window.location.href = "{% url 'mypost' %}";
+        {% endif %}
+      </script>
   </body>
 </html>
