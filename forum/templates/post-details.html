@@ -1,126 +1,122 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Detail Posting</title>
     <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
     <!-- Bootstrap Icons (optional) -->
     {% load static %}
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" />
     <style>
-        /* Custom styles for the comment textbox */
-        .comment-textbox {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ced4da;
-            border-radius: 4px;
-            margin-bottom: 15px;
-        }
-
-        /* Custom styles for the back button */
-        .back-button {
-            font-size: 1.5em;
-            color: #000;
-            /* Change the color as needed */
-            text-decoration: none;
-            margin-right: 10px;
-        }
+      /* Custom styles for the comment textbox */
+      .comment-textbox {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ced4da;
+        border-radius: 4px;
+        margin-bottom: 15px;
+      }
+      
+      /* Custom styles for the back button */
+      .back-button {
+        font-size: 1.5em;
+        color: #000;
+        /* Change the color as needed */
+        text-decoration: none;
+        margin-right: 10px;
+      }
     </style>
-</head>
+  </head>
 
-<body>
+  <body>
     <div class="container mt-5">
-        <!-- Back Button -->
-        <a href="{% url 'materiKuliah' %}" class="btn btn-secondary mb-3 back-button" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Tooltip on right">
-            <i class="bi bi-caret-left-fill"></i> Back
-        </a>
+      <!-- Back Button -->
+      <a href="{% url 'materiKuliah' %}" class="btn btn-secondary mb-3 back-button" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Tooltip on right"><i class="bi bi-caret-left-fill"></i> Back</a>
 
-        <!-- Posting Content -->
-        <div class="card mb-3">
-            <div class="card-body">
-                <h5 class="card-title">{{ post.judul }}</h5>
-                <p class="card-text">{{ post.deskripsi }}</p>
-                {% if post.gambar %}
-                <img src="{{ post.gambar.url }}" style="width: 200px;" alt="Gambar Posting">
-                {% endif %}
-                <p class="card-text">
-                    <small class="text-muted">Diposting pada: {{ post.created_at|date:"d F Y" }} oleh {{ post.pengguna.username }}</small>
-                </p>
+      <!-- Posting Content -->
+      <div class="card mb-3">
+        <div class="card-body">
+          <h5 class="card-title">{{ post.judul }}</h5>
+          <p class="card-text">{{ post.deskripsi }}</p>
+          {% if post.file_upload %}
+            <div class="d-flex align-items-center mb-3">
+              <i class="bi bi-file-earmark-"></i> <span class="ms-2">{{ post.file_upload.name }} <a href="{{ post.file_upload.url }}" download><i class="bi bi-download" title="Download"></i></a></span>
             </div>
+          {% endif %}
+          <p class="card-text">
+            <small class="text-muted">Diposting pada: {{ post.created_at|date:'d F Y' }} oleh {{ post.pengguna.username }}</small>
+          </p>
         </div>
+      </div>
 
-        <!-- Comments Section -->
-        <div class="card mb-3">
-            <div class="card-body">
-                <h5 class="card-title">Komentar</h5>
-                <div id="comments-container">
-                    {% if post.comments.all %}
-                        {% for comment in post.comments.all %}
-                            <div class="mb-3" id="comment-{{ comment.id }}">
-                                <strong>{{ comment.user.username }}</strong>
-                                <p>{{ comment.content }}</p>
-                                <a href="#" class="delete-comment" data-comment-id="{{ comment.id }}">Hapus</a>
-                                <br>
-                                <small class="text-muted">{{ comment.created_at|date:"d F Y H:i" }}</small>
-                                
-                            </div>
-                        {% endfor %}
-                    {% else %}
-                        <p>Belum ada komentar untuk posting ini.</p>
-                    {% endif %}
+      <!-- Comments Section -->
+      <div class="card mb-3">
+        <div class="card-body">
+          <h5 class="card-title">Komentar</h5>
+          <div id="comments-container">
+            {% if post.comments.all %}
+              {% for comment in post.comments.all %}
+                <div class="mb-3" id="comment-{{ comment.id }}">
+                  <strong>{{ comment.user.username }}</strong>
+                  <p>{{ comment.content }}</p>
+                  <a href="#" class="delete-comment" data-comment-id="{{ comment.id }}">Hapus</a>
+                  <br />
+                  <small class="text-muted">{{ comment.created_at|date:'d F Y H:i' }}</small>
                 </div>
-                <form id="comment-form" method="post" action="{% url 'add_comment' post.id %}">
-                    {% csrf_token %}
-                    <input type="text" name="comment" class="comment-textbox" placeholder="Tulis komentar Anda..." required>
-                    <button type="submit" class="btn btn-primary">Tambah Komentar</button>
-                </form>
-            </div>
+              {% endfor %}
+            {% else %}
+              <p>Belum ada komentar untuk posting ini.</p>
+            {% endif %}
+          </div>
+          <form id="comment-form" method="post" action="{% url 'add_comment' post.id %}">
+            {% csrf_token %}
+            <input type="text" name="comment" class="comment-textbox" placeholder="Tulis komentar Anda..." required />
+            <button type="submit" class="btn btn-primary">Tambah Komentar</button>
+          </form>
         </div>
+      </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        $(document).ready(function() {
-            $('#comment-form').submit(function(event) {
-                event.preventDefault();
-                var formData = $(this).serialize();
-                var url = $(this).attr('action');
-
-                $.post(url, formData, function(response) {
-                    if (response.success) {
-                        alert('Berhasil menambahkan komentar');
-                        location.reload();
-                    }
-                });
-            });
-
-            $('.delete-comment').click(function(event) {
-                event.preventDefault();
-                var commentId = $(this).data('comment-id');
-                var url = `{% url 'delete_comment' %}`.replace('0', commentId);
-
-                $.ajax({
-                    url: url,
-                    type: 'POST',
-                    data: {
-                        'comment_id': commentId,
-                        'csrfmiddlewaretoken': '{{ csrf_token }}'
-                    },
-                    success: function(response) {
-                        if (response.success) {
-                            alert('Berhasil menghapus komentar');
-                            location.reload();
-                        }
-                    }
-                });
-            });
-        });
+      $(document).ready(function () {
+        $('#comment-form').submit(function (event) {
+          event.preventDefault()
+          var formData = $(this).serialize()
+          var url = $(this).attr('action')
+      
+          $.post(url, formData, function (response) {
+            if (response.success) {
+              alert('Berhasil menambahkan komentar')
+              location.reload()
+            }
+          })
+        })
+      
+        $('.delete-comment').click(function (event) {
+          event.preventDefault()
+          var commentId = $(this).data('comment-id')
+          var url = `{% url 'delete_comment' %}`.replace('0', commentId)
+      
+          $.ajax({
+            url: url,
+            type: 'POST',
+            data: {
+              comment_id: commentId,
+              csrfmiddlewaretoken: '{{ csrf_token }}'
+            },
+            success: function (response) {
+              if (response.success) {
+                alert('Berhasil menghapus komentar')
+                location.reload()
+              }
+            }
+          })
+        })
+      })
     </script>
-
-</body>
-
+  </body>
 </html>

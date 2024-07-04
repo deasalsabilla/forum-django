@@ -8,7 +8,10 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.home, name='home'),
     path('contact/', views.contact, name='contact'),
+    path('event/', views.event, name='event'),
+    path('event/event-detail/<int:event_id>/', views.event_detail, name='detail-event'),
     path('mypost/edit/<int:post_id>/', views.edit_post, name='edit_post'),
+    path('myprojects/', views.myprojects, name='myprojects'),
     path('mypost/', views.mypost, name='mypost'),
     path('register/', views.register, name='register'),
     path('login/', views.login_view, name='login'), 
@@ -20,6 +23,10 @@ urlpatterns = [
     path('add_comment/<int:post_id>/', views.add_comment, name='add_comment'),
     path('delete_comment/', views.delete_comment, name='delete_comment'),
     path('delete-post/<int:post_id>/', views.delete_post, name='delete_post'),
-    path('unduh_galeri/<path>', views.unduh_galeri, name='unduh_galeri'),
+    path('download-file/<path:filename>/', views.download_file, name='download_file'),
+    path('proyek-kolaboratif/', views.proyek_kolaboratif, name='proyek-kolaboratif'),
+    path('buat-proyek/', views.buat_proyek, name='buat_proyek'),
+    path('proyek-detail/<int:proyek_id>/', views.proyek_detail, name='proyek-detail'),
+    path('filter_projects/', views.filter_projects, name='filter_projects'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

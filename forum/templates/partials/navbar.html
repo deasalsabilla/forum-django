@@ -1,90 +1,52 @@
-<nav
-  class="navbar navbar-expand-lg navbar-light bg-white px-4 px-lg-5 py-3 py-lg-0"
->
+<nav class="navbar navbar-expand-lg navbar-light bg-white px-4 px-lg-5 py-3 py-lg-0">
   <a href="index.html" class="navbar-brand p-0">
-    <h1 class="text-primary m-0">
-      <i class="fas fa-star-of-life me-3"></i>Forum
-    </h1>
+    <h1 class="text-primary m-0"><i class="fas fa-star-of-life me-3"></i>Forum</h1>
     <!-- <img src="img/logo.png" alt="Logo"> -->
   </a>
-  <button
-    class="navbar-toggler"
-    type="button"
-    data-bs-toggle="collapse"
-    data-bs-target="#navbarCollapse"
-  >
-    <span class="fa fa-bars"></span>
-  </button>
+  <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse"><span class="fa fa-bars"></span></button>
   <div class="collapse navbar-collapse" id="navbarCollapse">
     <div class="navbar-nav ms-auto py-0">
       <a href="{% url 'home' %}" class="nav-item nav-link active">Home</a>
-      <a href="{% url 'materiKuliah' %}" class="nav-item nav-link">Diskusi</a>
-      {% comment %} <div class="nav-item dropdown">
-        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"
-          >Diskusi</a
-        >
+      <div class="nav-item dropdown">
+        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Diskusi</a>
         <div class="dropdown-menu m-0">
-          <a href="{% url 'materiKuliah' %}" class="dropdown-item"
-            >Materi Kuliah</a
-          >
-          <a href="{% url 'proyekkolaboratif' %}" class="dropdown-item">Proyek Kolaboratif</a>
-          <a href="" class="dropdown-item">Event & Seminar</a>
+          <a href="{% url 'materiKuliah' %}" class="dropdown-item">Materi Kuliah</a>
+          <a href="{% url 'proyek-kolaboratif' %}" class="dropdown-item">Proyek Kolaboratif</a>
+          <a href="{% url 'event' %}" class="dropdown-item">Event & Seminar</a>
         </div>
-      </div> {% endcomment %}
+      </div>
       <a href="https://www.sttrcepu.ac.id/informatikas1/home" target="_blank" class="nav-item nav-link">Blog</a>
       <a href="{% url 'contact' %}" class="nav-item nav-link">Contact Us</a>
     </div>
 
     {% load static %} {% if user.is_authenticated %}
-    <div class="nav-item dropdown">
-      <a
-        class="nav-link dropdown-toggle"
-        href="#"
-        id="userDropdown"
-        role="button"
-        data-bs-toggle="dropdown"
-        aria-haspopup="true"
-        aria-expanded="false"
-      >
-        <span class="mr-2 d-none d-lg-inline text-gray-600 small"
-          >{{ user.username }}</span
-        >
-        <img
-          class="img-profile rounded-circle img-fluid"
-          src="{% static 'img/user.png' %}"
-          alt="User Profile"
-          style="max-width: 30px"
-        />
-      </a>
-      <div
-        class="dropdown-menu dropdown-menu-end shadow animated--grow-in"
-        aria-labelledby="userDropdown"
-      >
-        <a class="dropdown-item" href="{% url 'mypost' %}">
-          <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
-          My Posts
+      <div class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <span class="mr-2 d-none d-lg-inline text-gray-600 small">{{ user.username }}</span>
+          <img class="img-profile rounded-circle img-fluid" src="{% static 'img/user.png' %}" alt="User Profile" style="max-width: 30px" />
         </a>
-        <a class="dropdown-item" href="#">
-          <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
-          Settings
-        </a>
-        <a class="dropdown-item" href="#">
-          <i class="fas fa-list fa-sm fa-fw mr-2 text-gray-400"></i>
-          Activity Log
-        </a>
-        <div class="dropdown-divider"></div>
-        <a class="dropdown-item" href="{% url 'logout' %}">
-          <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
-          Logout
-        </a>
+        <div class="dropdown-menu dropdown-menu-end shadow animated--grow-in" aria-labelledby="userDropdown">
+          <a class="dropdown-item" href="{% url 'mypost' %}">
+            <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+            My Posts
+          </a>
+          <a class="dropdown-item" href="{% url 'myprojects' %}">
+            <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
+            My Projects
+          </a>
+          <a class="dropdown-item" href="#">
+            <i class="fas fa-list fa-sm fa-fw mr-2 text-gray-400"></i>
+            Activity Log
+          </a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" href="{% url 'logout' %}">
+            <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+            Logout
+          </a>
+        </div>
       </div>
-    </div>
     {% else %}
-    <a
-      href="{% url 'login' %}"
-      class="btn btn-primary rounded-pill text-white py-2 px-4 flex-wrap flex-sm-shrink-0"
-      >Login</a
-    >
+      <a href="{% url 'login' %}" class="btn btn-primary rounded-pill text-white py-2 px-4 flex-wrap flex-sm-shrink-0">Login</a>
     {% endif %}
   </div>
 </nav>

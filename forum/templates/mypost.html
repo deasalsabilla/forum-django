@@ -24,16 +24,15 @@
     <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
     <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}" />
     <style>
-      /* CSS tambahan untuk menengahkan gambar */
       .feature-icon {
         display: flex;
         justify-content: center;
       }
       .feature-icon img {
-        width: 100%; /* Mengisi lebar div dengan gambar */
-        height: auto; /* Menjaga proporsi gambar */
-        max-width: 175px; /* Lebar maksimum gambar */
-        border-radius: 8px; /* Sudut bulat */
+        width: 100%;
+        height: auto;
+        max-width: 175px;
+        border-radius: 8px;
       }
       
       .card-delete-icon {
@@ -43,6 +42,21 @@
         z-index: 1;
         color: red;
         cursor: pointer;
+      }
+      
+      .wrap-text {
+        word-wrap: break-word;
+        white-space: normal;
+      }
+      
+      .feature-item {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+      }
+      
+      .feature-content {
+        flex-grow: 1;
       }
     </style>
   </head>
@@ -79,7 +93,11 @@
                       <div class="card-delete-icon" onclick="deletePost({{ post.id }})">
                         <i class="fas fa-trash-alt"></i>
                       </div>
-                      <img src="{{ post.gambar.url }}" style="width: 200px; height: 175px; object-fit: cover; border-radius: 50%;" />
+                      {% if post.file_upload %}
+                        <a href="{% url 'download_file' post.file_upload.name %}" class="ms-2 wrap-text file-link">{{ post.file_upload.name }}</a>
+                      {% else %}
+                        <span class="ms-2 text-muted">No file uploaded</span>
+                      {% endif %}
                     </div>
                   </div>
                   <div class="feature-content d-flex flex-column">

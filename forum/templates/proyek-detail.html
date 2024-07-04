@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Detail Proyek</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" />
+    <style>
+      body {
+        background-color: #f8f9fa;
+        font-family: Arial, sans-serif;
+      }
+      
+      .left-images {
+        position: relative;
+      }
+      
+      .left-images img {
+        border-radius: 10px;
+        margin-bottom: 20px;
+        max-height: 100%;
+        object-fit: cover;
+        width: 100%;
+      }
+      
+      .project-category {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        font-size: 18px;
+        color: #ffffff; /* Ubah warna teks menjadi putih */
+        background-color: #007bff; /* Warna latar belakang lebih berwarna */
+        padding: 5px 10px;
+        border-radius: 5px;
+        text-transform: capitalize; /* Setiap awal kata berawalan huruf besar */
+      }
+      
+      .right-content {
+        padding: 30px;
+        background: #fff;
+        border-radius: 10px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        height: 418px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+      
+      .right-content h4 {
+        font-size: 28px;
+        margin-bottom: 15px;
+        color: #333;
+        font-weight: bold;
+        text-transform: capitalize; /* Setiap awal kata berawalan huruf besar */
+      }
+      
+      .right-content p {
+        text-transform: capitalize; /* Setiap awal kata berawalan huruf besar */
+      }
+      
+      .quote {
+        background: #f9f9f9;
+        padding: 15px;
+        margin: 20px 0;
+        border-radius: 5px;
+        position: relative;
+      }
+      
+      .quote i {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        color: #28a745;
+        font-size: 24px;
+      }
+      
+      .quote p {
+        margin: 0;
+        padding-left: 35px;
+        color: #666;
+        font-style: italic;
+        text-transform: capitalize; /* Setiap awal kata berawalan huruf besar */
+      }
+      
+      .join-button {
+        margin-top: auto; /* Menempatkan tombol ke bawah */
+        text-align: center;
+      }
+      
+      .join-button .btn {
+        background-color: #007bff;
+        border-color: #007bff;
+        padding: 10px 30px;
+        font-size: 18px;
+        border-radius: 5px;
+      }
+      
+      .join-button .btn:hover {
+        background-color: #0056b3;
+      }
+      
+      .back-button {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        z-index: 1000;
+        background: #fff;
+        border: 2px solid #007bff;
+        border-radius: 50%;
+        padding: 10px 15px;
+        color: #007bff;
+        text-decoration: none;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        transition: background 0.3s, color 0.3s;
+      }
+      
+      .back-button:hover {
+        background: #007bff;
+        color: #fff;
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- Back Button -->
+    <a href="javascript:history.back()" class="back-button"><i class="bi bi-arrow-left"></i></a>
+
+    <!-- Main Content Section -->
+    <section class="section" id="product">
+      <div class="container mt-5">
+        <div class="row">
+          <div class="col-lg-8">
+            <div class="left-images">
+              <img src="{{ proyek.sampul.url }}" alt="{{ proyek.judul }}" class="img-fluid" />
+              <span class="project-category">{{ proyek.kategori_proyek }}</span>
+            </div>
+          </div>
+          <div class="col-lg-4">
+            <div class="right-content">
+              <h4>{{ proyek.judul }}</h4>
+              <p>{{ proyek.deskripsi }}</p>
+              <div class="quote">
+                <i class="bi bi-chat-left-quote"></i>
+                <p>{{ proyek.syarat }}</p>
+              </div>
+              <div class="join-button">
+                <!-- Button trigger modal -->
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">Bergabung Sekarang</button>
+
+                <!-- Modal -->
+                <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                  <div class="modal-dialog">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      <div class="modal-body">...</div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary">Save changes</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="d-flex justify-content-between mt-4">
+                <small class="text-muted">Diposting pada {{ proyek.created_at|date:'d M Y' }}</small>
+                <small class="text-muted">Oleh: {{ proyek.user }}</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- End Main Content Section -->
+
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  </body>
+</html>

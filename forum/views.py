@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import KatMateri, MataKuliah, Post, Comment
+from .models import KatMateri, MataKuliah, Post, Comment, Proyek, Event
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib import auth
@@ -14,9 +14,33 @@ from django.conf import settings
 from django.core.files.storage import FileSystemStorage
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
-
 def home(request):
     return render(request, 'index.html')
+
+def myprojects(request):
+    return render(request, 'myprojects.html')
+
+def proyek_detail(request, proyek_id):
+    proyek = get_object_or_404(Proyek, pk=proyek_id)
+    context = {
+        'proyek': proyek
+    }
+    return render(request, 'proyek-detail.html', context)
+
+def event_detail(request, event_id):
+    event = get_object_or_404(Event, id=event_id)
+    return render(request, 'event-detail.html', {'event': event})
+
+def event(request):
+    events = Event.objects.all()
+    return render(request, 'event.html', {'events': events})
+
+def proyek_kolaboratif(request):
+    proyek_diterima = Proyek.objects.filter(status='diterima')
+    context = {
+        'proyek_diterima': proyek_diterima
+    }
+    return render(request, 'proyek-kolaboratif.html', context)
 
 def contact(request):
     return render(request, 'contact.html')
@@ -143,7 +167,7 @@ def buat_post(request):
         deskripsi = request.POST['deskripsi']
         semester_id = request.POST.get('semester')
         matkul_id = request.POST.get('matakuliah')
-        gambar = request.FILES.get('gambar')
+        file_upload = request.FILES.get('file_upload')  # Access the uploaded file
 
         if judul and deskripsi and semester_id and matkul_id:
             try:
@@ -151,8 +175,8 @@ def buat_post(request):
                 matkul = MataKuliah.objects.get(id=matkul_id)
                 post = Post(judul=judul, deskripsi=deskripsi, semester=semester, matkul=matkul, pengguna=request.user)
 
-                if gambar:
-                    post.gambar = gambar
+                if file_upload:
+                    post.file_upload = file_upload  # Save the uploaded file
 
                 post.save()
                 request.session['create_success'] = True  # Set success flag
@@ -166,7 +190,8 @@ def buat_post(request):
         return render(request, 'buatPosting.html', {
             'kategori_materi': KatMateri.objects.all(),
             'create_success': create_success
-        })        
+        })
+        
 def add_comment(request, post_id):
     if request.method == 'POST':
         comment_content = request.POST.get('comment')
@@ -207,11 +232,56 @@ def delete_post(request, post_id):
     except Exception as e:
         return JsonResponse({'success': False, 'message': str(e)})
 
-def unduh_galeri(request, path):
-    file_path = os.path.join(settings.MEDIA_ROOT, path)
+def download_file(request, filename):
+    file_path = os.path.join(settings.MEDIA_ROOT, filename)
     if os.path.exists(file_path):
         with open(file_path, 'rb') as fh:
             response = HttpResponse(fh.read(), content_type="application/octet-stream")
             response['Content-Disposition'] = 'inline; filename=' + os.path.basename(file_path)
             return response
     raise Http404
+
+@login_required
+def buat_proyek(request):
+    if request.method == 'POST':
+        judul = request.POST.get('judul')
+        deskripsi = request.POST.get('deskripsi')
+        syarat = request.POST.get('syarat')
+        kategori_proyek = request.POST.get('kategori_proyek')
+        sampul = request.FILES.get('file_upload')
+
+        proyek = Proyek(
+            user=request.user,
+            judul=judul,
+            deskripsi=deskripsi,
+            syarat=syarat,
+            kategori_proyek=kategori_proyek,
+            status='direview',
+            created_at=timezone.now(),
+            sampul=sampul
+        )
+        proyek.save()
+        messages.success(request, 'Proyek berhasil ditambahkan!')
+        return redirect('proyek-kolaboratif')  # Ubah 'proyek-kolaboratif' dengan nama view atau URL yang ingin dituju setelah berhasil menyimpan data
+
+    return render(request, 'proyek-kolaboratif.html')
+
+def filter_projects(request):
+    category = request.GET.get('category', 'Proyek Kolaboratif')
+    if category == 'Proyek Kolaboratif':
+        projects = Proyek.objects.filter(status='diterima')
+    else:
+        projects = Proyek.objects.filter(status='diterima', kategori_proyek=category)
+
+    project_list = []
+    for project in projects:
+        project_list.append({
+            'kategori_proyek': project.kategori_proyek,
+            'sampul': project.sampul.url,
+            'judul': project.judul,
+            'deskripsi': project.deskripsi[:200] + '...',
+            'created_at': project.created_at.strftime('%d %b %Y %H:%M'),
+            'user': project.user.username,
+        })
+
+    return JsonResponse(project_list, safe=False)

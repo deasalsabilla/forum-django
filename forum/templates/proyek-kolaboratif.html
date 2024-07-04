@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Proyek Kolaboratif</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Forum | Proyek Kolaboratif</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600&family=Playfair+Display:wght@400;500;600&display=swap" rel="stylesheet" />
 
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css" />
@@ -16,171 +16,158 @@
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
     <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}" />
-</head>
+    <style>
+      .post {
+        position: fixed;
+        right: 30px;
+        bottom: 30px;
+        display: flex;
+        width: 115px;
+        height: 45px;
+        align-items: center;
+        justify-content: center;
+        transition: 0.5s;
+        z-index: 99;
+      }
 
-<body>
+      .badge-lomba {
+        background-color: #ff4757; /* Merah */
+        color: #ffffff;
+      }
+  
+      .badge-pengabdian {
+        background-color: #1e90ff; /* Biru */
+        color: #ffffff;
+      }
+  
+      .badge-individu {
+        background-color: #2ed573; /* Hijau */
+        color: #ffffff;
+      }
+
+      
+    </style>
+  </head>
+
+  <body>
     {% include 'partials/navbar.html' %}
     <div class="container-fluid">
-        <div class="row">
-            <!-- Sidebar -->
-            <nav id="sidebar" class="col-md-3 col-lg-2 d-md-block bg-light sidebar">
-                <div class="position-sticky">
-                    <a class="nav-link active" href="#" onclick="changeContent('Proyek Kolaboratif')">
-                        <h3>Proyek Kolaboratif</h3>
-                    </a>
-                    <ul class="nav flex-column">
-                        <li class="nav-item">
-                            <a class="nav-link" href="#" onclick="changeContent('Pengabdian Masyarakat')">Pengabdian</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#" onclick="changeContent('Lomba')">Lomba</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#" onclick="changeContent('Individu')">Individu</a>
-                        </li>
-                    </ul>
-                </div>
-            </nav>
+      <div class="row">
+        <!-- Sidebar -->
+        <nav id="sidebar" class="col-md-3 col-lg-2 d-md-block bg-light sidebar">
+          <div class="position-sticky">
+            <a class="nav-link active" href="#" onclick="changeContent('Proyek Kolaboratif')"><h3>Proyek Kolaboratif</h3></a>
+            <ul class="nav flex-column">
+              <li class="nav-item">
+                <a class="nav-link" href="#" onclick="changeContent('Pengabdian Masyarakat')">Pengabdian</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#" onclick="changeContent('Lomba')">Lomba</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#" onclick="changeContent('Individu')">Individu</a>
+              </li>
+            </ul>
+          </div>
+        </nav>
 
+        <!-- Konten Utama -->
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+          <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+            <h1 class="h2" id="mainTitle">Proyek Kolaboratif</h1>
+          </div>
 
-            <!-- Konten Utama -->
-            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                    <h1 class="h2" id="mainTitle">Proyek Kolaboratif</h1>
-                </div>
-
-                <!-- Isi Konten Proyek Kolaboratif -->
-                <div class="container" id="mainContent">
-                    <!-- Konten akan diubah secara dinamis oleh JavaScript -->
-                    <div class="row row-cols-1 row-cols-md-3 g-4">
-                        <div class="col">
-                            <div class="card h-100">
-                                <img src="..." class="card-img-top" alt="...">
-                                <div class="card-body">
-                                    <h5 class="card-title">Card title</h5>
-                                    <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
-                                    <a href="#" class="btn btn-primary">Baca Selengkapnya</a>
-                                </div>
-                                <div class="card-footer">
-                                    <small class="text-body-secondary">Last updated 3 mins ago</small>
-                                </div>
-                            </div>
+          {% if messages %}
+            {% for message in messages %}
+              <div class="alert alert-success alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+            {% endfor %}
+          {% endif %}
+          <!-- Proyek Start -->
+          <div class="container-fluid service py-1" id="mainContent">
+            <div class="container py-1">
+              <div class="row g-4 justify-content-start">
+                {% for proyek in proyek_diterima %}
+                  <div class="col-md-6 col-lg-4 col-xl-3 wow fadeInUp" data-wow-delay="0.1s">
+                    <div class="service-item rounded">
+                      <div class="service-img rounded-top">
+                        <img src="{{ proyek.sampul.url }}" class="img-fluid rounded-top w-100" alt="{{ proyek.judul }}" style="height: 150px;"/>
+                      </div>
+                      <div class="service-content rounded-bottom bg-light p-4">
+                        <div class="service-content-inner">
+                          <span class="mb-3 badge {% if proyek.kategori_proyek == 'lomba' %}badge-lomba{% elif proyek.kategori_proyek == 'pengabdian' %}badge-pengabdian{% else %}badge-individu{% endif %}">
+                            {{ proyek.kategori_proyek | capfirst }}
+                          </span>
+                          <h5 class="mb-4">{{ proyek.judul }}</h5>
+                          <p class="mb-4">{{ proyek.deskripsi|truncatewords:20 }}</p>
+                          <a href="{% url 'proyek-detail' proyek.id %}" class="btn btn-primary rounded-pill text-white py-2 px-4 mb-2">Lihat Detail</a>
+                          <hr>
+                          <div class="d-flex justify-content-between">
+                            <small class="text-muted">{{ proyek.created_at|date:"d M Y H:i" }}</small>
+                            <small class="text-muted">{{ proyek.user }}</small>
+                          </div>
                         </div>
-                        <div class="col">
-                            <div class="card h-100">
-                                <img src="..." class="card-img-top" alt="...">
-                                <div class="card-body">
-                                    <h5 class="card-title">Card title</h5>
-                                    <p class="card-text">This card has supporting text below as a natural lead-in to additional content.</p>
-                                    <a href="#" class="btn btn-primary">Baca Selengkapnya</a>
-                                </div>
-                                <div class="card-footer">
-                                    <small class="text-body-secondary">Last updated 3 mins ago</small>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="card h-100">
-                                <img src="..." class="card-img-top" alt="...">
-                                <div class="card-body">
-                                    <h5 class="card-title">Card title</h5>
-                                    <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This card has even longer content than the first to show that equal height action.</p>
-                                    <a href="#" class="btn btn-primary">Baca Selengkapnya</a>
-                                </div>
-                                <div class="card-footer">
-                                    <small class="text-body-secondary">Last updated 3 mins ago</small>
-                                </div>
-                            </div>
-                        </div>
+                      </div>
                     </div>
-                </div>
-            </main>
-        </div>
+                  </div>
+                {% endfor %}
+              </div>
+            </div>
+          </div>                    
+          <!-- Services End -->
+        </main>
+      </div>
     </div>
-
-
+    {% include 'partials/buatProyek.html' %}
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-    function changeContent(title) {
-    document.getElementById('mainTitle').innerHTML = title;
+      function changeContent(title) {
+        document.getElementById('mainTitle').innerHTML = title;
+        
+        // Make an AJAX request to get the filtered projects
+        fetch(`/filter_projects/?category=${title}`)
+          .then(response => response.json())
+          .then(data => {
+            const content = document.getElementById('mainContent');
+            content.innerHTML = '';
 
-    const content = document.getElementById('mainContent');
-    content.innerHTML = '';
+            if (data.length === 0) {
+              content.innerHTML = '<p>Projects not found.</p>';
+            } else {
+              let cardContent = '<div class="row g-4 justify-content-start">';
 
-    let cardContent = '';
-
-    if (title === 'Proyek Kolaboratif') {
-        // Menambahkan proyek kolaboratif ke konten utama
-        cardContent = `
-            <div class="row row-cols-1 row-cols-md-3 g-4">
-                <div class="col">
-                    <div class="card h-100">
-                        <img src="..." class="card-img-top" alt="...">
-                        <div class="card-body">
-                            <h5 class="card-title">Card title</h5>
-                            <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
-                            <a href="#" class="btn btn-primary">Go somewhere</a>
+              data.forEach(proyek => {
+                cardContent += `
+                  <div class="col-md-6 col-lg-4 col-xl-3 wow fadeInUp" data-wow-delay="0.1s">
+                    <div class="service-item rounded">
+                      <span class="badge bg-info position-absolute top-0 start-0 m-3">${proyek.kategori_proyek}</span>
+                      <div class="service-img rounded-top">
+                        <img src="${proyek.sampul}" class="img-fluid rounded-top w-100" alt="${proyek.judul}" style="height: 150px;"/>
+                      </div>
+                      <div class="service-content rounded-bottom bg-light p-4">
+                        <div class="service-content-inner">
+                          <h5 class="mb-4">${proyek.judul}</h5>
+                          <p class="mb-4">${proyek.deskripsi}</p>
+                          <a href="#" class="btn btn-primary rounded-pill text-white py-2 px-4 mb-2">Lihat Detail</a>
+                          <hr>
+                          <div class="d-flex justify-content-between">
+                            <small class="text-muted">${proyek.created_at}</small>
+                            <small class="text-muted">${proyek.user}</small>
+                          </div>
                         </div>
-                        <div class="card-footer">
-                            <small class="text-body-secondary">Last updated 3 mins ago</small>
-                        </div>
+                      </div>
                     </div>
-                </div>
-                <div class="col">
-                    <div class="card h-100">
-                        <img src="..." class="card-img-top" alt="...">
-                        <div class="card-body">
-                            <h5 class="card-title">Card title</h5>
-                            <p class="card-text">This card has supporting text below as a natural lead-in to additional content.</p>
-                            <a href="#" class="btn btn-primary">Go somewhere</a>
-                        </div>
-                        <div class="card-footer">
-                            <small class="text-body-secondary">Last updated 3 mins ago</small>
-                        </div>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="card h-100">
-                        <img src="..." class="card-img-top" alt="...">
-                        <div class="card-body">
-                            <h5 class="card-title">Card title</h5>
-                            <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This card has even longer content than the first to show that equal height action.</p>
-                            <a href="#" class="btn btn-primary">Go somewhere</a>
-                        </div>
-                        <div class="card-footer">
-                            <small class="text-body-secondary">Last updated 3 mins ago</small>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        `;
-    } else {
-        // Menampilkan konten sesuai dengan kriteria yang dipilih sebelumnya (Pengabdian Masyarakat, Lomba, Individu)
-        if (title === 'Pengabdian Masyarakat') {
-            cardContent = `
-                <!-- Konten card untuk Pengabdian Masyarakat -->
-                <!-- Menyertakan konten card sesuai dengan kriteria -->
-            `;
-        } else if (title === 'Lomba') {
-            cardContent = `
-                <!-- Konten card untuk Lomba -->
-                <!-- Menyertakan konten card sesuai dengan kriteria -->
-            `;
-        } else if (title === 'Individu') {
-            cardContent = `
-                <!-- Konten card untuk Individu -->
-                <!-- Menyertakan konten card sesuai dengan kriteria -->
-            `;
-        }
-    }
+                  </div>
+                `;
+              });
 
-    // Menambahkan konten ke dalam elemen konten utama
-    content.innerHTML = cardContent;
-}
-</script>
-
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-
+              cardContent += '</div>';
+              content.innerHTML = cardContent;
+            }
+          });
+      }
+    </script>
+  </body>
 </html>

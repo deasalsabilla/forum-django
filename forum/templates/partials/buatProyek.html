@@ -1,0 +1,49 @@
+
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-primary post" data-bs-toggle="modal" data-bs-target="#exampleModal"><i class="fas fa-plus"></i> Buat Proyek</button>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content text-black">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Buat Proyek</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form action="{% url 'buat_proyek' %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="gambar" class="form-label">Sampul Proyek</label>
+            <input type="file" name="file_upload" class="form-control" id="gambar" style="color: black" />
+          </div>
+          <div class="mb-3">
+            <label for="judul" class="form-label">Judul Proyek</label>
+            <input type="text" name="judul" class="form-control" id="judul" placeholder="Masukkan Judul" style="color: black" />
+          </div>
+          <div class="mb-3">
+            <label for="deskripsi" class="form-label">Deskripsi</label>
+            <textarea class="form-control" name="deskripsi" id="deskripsi" rows="3" placeholder="Masukkan Deskripsi" style="color: black"></textarea>
+          </div>
+          <div class="mb-3">
+            <label for="syarat" class="form-label">Persyaratan</label>
+            <textarea class="form-control" name="syarat" id="syarat" rows="3" placeholder="Persyaratan: Mahasiswa Semester 3 dll" style="color: black"></textarea>
+          </div>
+          <div class="mb-3">
+            <label for="kategori_proyek">Kategori Proyek</label>
+            <select class="form-select" id="kategori_proyek" name="kategori_proyek" aria-label="Default select example" style="color: black">
+              <option value="">-- Pilih Kategori --</option>
+              <option value="lomba">Lomba</option>
+              <option value="pengabdian">Pengabdian</option>
+              <option value="individu">Individu</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary">Save changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
