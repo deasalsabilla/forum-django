@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import KatMateri, MataKuliah, Post, Comment, Proyek, Event
+from .models import KatMateri, MataKuliah, Post, Comment, Proyek, Event, LamarProyek
 
 admin.site.site_header = "Forum Admin"
 
@@ -20,6 +20,10 @@ class CommentAdmin(admin.ModelAdmin):
 
 @admin.register(Event)
 class EventAdmin(admin.ModelAdmin):
+    pass
+
+@admin.register(LamarProyek)
+class LamarProyekAdmin(admin.ModelAdmin):
     pass
 
 @admin.register(Proyek)

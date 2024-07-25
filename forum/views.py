@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import KatMateri, MataKuliah, Post, Comment, Proyek, Event
+from .models import KatMateri, MataKuliah, Post, Comment, Proyek, Event, LamarProyek
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib import auth
@@ -12,13 +12,33 @@ from django.utils import timezone
 from django.views.decorators.http import require_POST
 from django.conf import settings
 from django.core.files.storage import FileSystemStorage
+from django.core.exceptions import ValidationError
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+
 
 def home(request):
     return render(request, 'index.html')
 
+
 def myprojects(request):
     return render(request, 'myprojects.html')
+
+
+@login_required
+def proyek_pribadi(request):
+    user_projects = Proyek.objects.filter(user=request.user)
+    return render(request, 'proyek-pribadi.html', {'projects': user_projects})
+
+
+def proyek_pribadi_detail(request):
+    return render(request, 'proyek-pribadi-detail.html')
+
+
+def proyek_dilamar_list(request):
+    # Retrieve all instances of LamarProyek
+    proyek_dilamar_list = LamarProyek.objects.all()
+    return render(request, 'proyek-dilamar.html', {'proyek_dilamar_list': proyek_dilamar_list})
+
 
 def proyek_detail(request, proyek_id):
     proyek = get_object_or_404(Proyek, pk=proyek_id)
@@ -27,13 +47,16 @@ def proyek_detail(request, proyek_id):
     }
     return render(request, 'proyek-detail.html', context)
 
+
 def event_detail(request, event_id):
     event = get_object_or_404(Event, id=event_id)
     return render(request, 'event-detail.html', {'event': event})
 
+
 def event(request):
     events = Event.objects.all()
     return render(request, 'event.html', {'events': events})
+
 
 def proyek_kolaboratif(request):
     proyek_diterima = Proyek.objects.filter(status='diterima')
@@ -42,8 +65,10 @@ def proyek_kolaboratif(request):
     }
     return render(request, 'proyek-kolaboratif.html', context)
 
+
 def contact(request):
     return render(request, 'contact.html')
+
 
 @login_required(login_url='/login/')
 def mypost(request):
@@ -61,9 +86,11 @@ def detail_post(request, post_id):
     }
     return render(request, 'post-details.html', context)
 
+
 def edit_post(request, post_id):
     post = get_object_or_404(Post, id=post_id)
-    edit_success = request.session.pop('edit_success', False)  # Get and remove the flag from session
+    # Get and remove the flag from session
+    edit_success = request.session.pop('edit_success', False)
 
     if request.method == 'POST':
         try:
@@ -88,6 +115,7 @@ def edit_post(request, post_id):
 
     return render(request, 'edit.html', {'post': post, 'edit_success': edit_success})
 
+
 def login_view(request):
     if request.method == 'POST':
         username = request.POST['username']
@@ -101,9 +129,11 @@ def login_view(request):
     else:
         return render(request, 'login.html')
 
+
 def logout_user(request):
     django_logout(request)
     return redirect('login')
+
 
 def materiKuliah(request):
     posts_list = Post.objects.all()
@@ -127,13 +157,16 @@ def materiKuliah(request):
         'mata_kuliah': mata_kuliah,
     }
     return render(request, 'materiKuliah.html', context)
+
+
 def get_mata_kuliah(request):
     semester_id = request.GET.get('semester_id')
     mk_id = request.GET.get('mk_id')
 
     if semester_id:
         # Jika hanya semester_id yang ada, kembalikan daftar mata kuliah
-        mata_kuliah = MataKuliah.objects.filter(semester_id=semester_id).values('id', 'nama')
+        mata_kuliah = MataKuliah.objects.filter(
+            semester_id=semester_id).values('id', 'nama')
         return JsonResponse(list(mata_kuliah), safe=False)
     elif mk_id:
         # Jika hanya mk_id yang ada, kembalikan postingan berdasarkan mata kuliah yang dipilih
@@ -143,7 +176,8 @@ def get_mata_kuliah(request):
         # Jika tidak ada parameter yang diberikan, kembalikan semua postingan
         posts = Post.objects.all()
         return render(request, 'partials/post_list.html', {'posts': posts})
-    
+
+
 def register(request):
     if request.method == 'POST':
         first_name = request.POST['first_name']
@@ -152,13 +186,15 @@ def register(request):
         password = request.POST['password']
         repeat_password = request.POST['repeat_password']
         if password == repeat_password:
-            user = User.objects.create_user(username=username, password=password, first_name=first_name, last_name=last_name)
+            user = User.objects.create_user(
+                username=username, password=password, first_name=first_name, last_name=last_name)
             user.save()
             return redirect('login')
         else:
             return render(request, 'register.html', {'error': 'Passwords do not match'})
     else:
         return render(request, 'register.html')
+
 
 @login_required(login_url='/login/')
 def buat_post(request):
@@ -167,37 +203,43 @@ def buat_post(request):
         deskripsi = request.POST['deskripsi']
         semester_id = request.POST.get('semester')
         matkul_id = request.POST.get('matakuliah')
-        file_upload = request.FILES.get('file_upload')  # Access the uploaded file
+        file_upload = request.FILES.get(
+            'file_upload')  # Access the uploaded file
 
         if judul and deskripsi and semester_id and matkul_id:
             try:
                 semester = KatMateri.objects.get(id=semester_id)
                 matkul = MataKuliah.objects.get(id=matkul_id)
-                post = Post(judul=judul, deskripsi=deskripsi, semester=semester, matkul=matkul, pengguna=request.user)
+                post = Post(judul=judul, deskripsi=deskripsi,
+                            semester=semester, matkul=matkul, pengguna=request.user)
 
                 if file_upload:
                     post.file_upload = file_upload  # Save the uploaded file
 
                 post.save()
                 request.session['create_success'] = True  # Set success flag
-                return redirect('materiKuliah')  # Redirect to the same view to display the success message
+                # Redirect to the same view to display the success message
+                return redirect('materiKuliah')
             except (KatMateri.DoesNotExist, MataKuliah.DoesNotExist):
                 return render(request, 'error.html', {'error_message': 'Data tidak valid'})
         else:
             return render(request, 'error.html', {'error_message': 'Formulir tidak lengkap'})
     else:
-        create_success = request.session.pop('create_success', False)  # Retrieve and remove the flag from the session
+        # Retrieve and remove the flag from the session
+        create_success = request.session.pop('create_success', False)
         return render(request, 'buatPosting.html', {
             'kategori_materi': KatMateri.objects.all(),
             'create_success': create_success
         })
-        
+
+
 def add_comment(request, post_id):
     if request.method == 'POST':
         comment_content = request.POST.get('comment')
         if comment_content:
             post = get_object_or_404(Post, pk=post_id)
-            comment = Comment.objects.create(post=post, user=request.user, content=comment_content, created_at=timezone.now())
+            comment = Comment.objects.create(
+                post=post, user=request.user, content=comment_content, created_at=timezone.now())
             if request.headers.get('x-requested-with') == 'XMLHttpRequest':
                 response = {
                     'success': True,
@@ -210,6 +252,7 @@ def add_comment(request, post_id):
                 return JsonResponse(response)
     return redirect('detail_post', post_id=post_id)
 
+
 @require_POST
 def delete_comment(request):
     comment_id = request.POST.get('comment_id')
@@ -219,6 +262,7 @@ def delete_comment(request):
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
         return JsonResponse({'success': True})
     return redirect('detail_post', post_id=post_id)
+
 
 @require_POST
 @login_required
@@ -232,14 +276,18 @@ def delete_post(request, post_id):
     except Exception as e:
         return JsonResponse({'success': False, 'message': str(e)})
 
+
 def download_file(request, filename):
     file_path = os.path.join(settings.MEDIA_ROOT, filename)
     if os.path.exists(file_path):
         with open(file_path, 'rb') as fh:
-            response = HttpResponse(fh.read(), content_type="application/octet-stream")
-            response['Content-Disposition'] = 'inline; filename=' + os.path.basename(file_path)
+            response = HttpResponse(
+                fh.read(), content_type="application/octet-stream")
+            response['Content-Disposition'] = 'inline; filename=' + \
+                os.path.basename(file_path)
             return response
     raise Http404
+
 
 @login_required
 def buat_proyek(request):
@@ -262,16 +310,19 @@ def buat_proyek(request):
         )
         proyek.save()
         messages.success(request, 'Proyek berhasil ditambahkan!')
-        return redirect('proyek-kolaboratif')  # Ubah 'proyek-kolaboratif' dengan nama view atau URL yang ingin dituju setelah berhasil menyimpan data
+        # Ubah 'proyek-kolaboratif' dengan nama view atau URL yang ingin dituju setelah berhasil menyimpan data
+        return redirect('proyek-kolaboratif')
 
     return render(request, 'proyek-kolaboratif.html')
+
 
 def filter_projects(request):
     category = request.GET.get('category', 'Proyek Kolaboratif')
     if category == 'Proyek Kolaboratif':
         projects = Proyek.objects.filter(status='diterima')
     else:
-        projects = Proyek.objects.filter(status='diterima', kategori_proyek=category)
+        projects = Proyek.objects.filter(
+            status='diterima', kategori_proyek=category)
 
     project_list = []
     for project in projects:
@@ -285,3 +336,38 @@ def filter_projects(request):
         })
 
     return JsonResponse(project_list, safe=False)
+
+
+def submit_application(request, proyek_id):
+    proyek = get_object_or_404(Proyek, id=proyek_id)
+
+    if request.method == 'POST':
+        nama = request.POST['nama']
+        jurusan = request.POST['jurusan']
+        cv = request.FILES['cv']
+
+        try:
+            # Validasi file extension
+            if not cv.name.endswith('.pdf'):
+                messages.error(
+                    request, 'Hanya file PDF saja yang diperbolehkan.')
+                return redirect('proyek_detail', proyek_id=proyek.id)
+
+            # Simpan data ke database
+            lamar_proyek = LamarProyek(
+                nama=nama,
+                jurusan=jurusan,
+                cv=cv,
+                kategori=proyek.kategori_proyek,
+                nama_proyek=proyek,
+                status='menunggu'
+            )
+            lamar_proyek.save()
+
+            messages.success(request, 'Lamaran Anda Berhasil Terkirim.')
+            return redirect('proyek-kolaboratif')
+
+        except ValidationError as e:
+            messages.error(request, e.message)
+
+    return render(request, 'proyek-detail.html', {'proyek': proyek})
