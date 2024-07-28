@@ -65,7 +65,7 @@
                   <span class="mb-3 badge text-bg-info">{{ proyek.get_status_display }}</span>
                   <h4 class="mb-3">{{ proyek.judul }}</h4>
                   <p class="mb-4">{{ proyek.deskripsi }}</p>
-                  <a class="btn-hover-bg btn btn-primary text-white py-2 px-3" href="{% url 'proyek-pribadi-detail'%}">Read More</a>
+                  <a class="btn-hover-bg btn btn-primary text-white py-2 px-3" href="{% url 'proyek-pribadi-detail' proyek.id%}">Read More</a>
                 </div>
               </div>
             </div>

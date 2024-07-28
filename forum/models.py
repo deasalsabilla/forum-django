@@ -135,7 +135,7 @@ class LamarProyek(models.Model):
     kategori = models.CharField(max_length=10, choices=KATEGORI_CHOICES, null=True, blank=True)
     nama_proyek = models.ForeignKey(Proyek, on_delete=models.CASCADE, null=True, blank=True)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='menunggu')
-
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     def __str__(self):
         return self.nama
 

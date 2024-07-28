@@ -29,16 +29,26 @@ def proyek_pribadi(request):
     user_projects = Proyek.objects.filter(user=request.user)
     return render(request, 'proyek-pribadi.html', {'projects': user_projects})
 
+@login_required
+def proyek_pribadi_detail(request, proyek_id):
+    proyek = get_object_or_404(Proyek, id=proyek_id)
+    pelamar = LamarProyek.objects.filter(nama_proyek=proyek)
 
-def proyek_pribadi_detail(request):
-    return render(request, 'proyek-pribadi-detail.html')
+    return render(request, 'proyek-pribadi-detail.html', {
+        'proyek': proyek,
+        'pelamar': pelamar
+    })
 
+@login_required
+def proyek_dilamar(request):
+    user = request.user
+    proyek_dilamar_list = LamarProyek.objects.filter(user=user)
+    paginator = Paginator(proyek_dilamar_list, 4)  # Batasi 4 card per halaman
 
-def proyek_dilamar_list(request):
-    # Retrieve all instances of LamarProyek
-    proyek_dilamar_list = LamarProyek.objects.all()
-    return render(request, 'proyek-dilamar.html', {'proyek_dilamar_list': proyek_dilamar_list})
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
 
+    return render(request, 'proyek-dilamar.html', {'page_obj': page_obj})
 
 def proyek_detail(request, proyek_id):
     proyek = get_object_or_404(Proyek, pk=proyek_id)
@@ -338,6 +348,7 @@ def filter_projects(request):
     return JsonResponse(project_list, safe=False)
 
 
+@login_required
 def submit_application(request, proyek_id):
     proyek = get_object_or_404(Proyek, id=proyek_id)
 
@@ -345,7 +356,7 @@ def submit_application(request, proyek_id):
         nama = request.POST['nama']
         jurusan = request.POST['jurusan']
         cv = request.FILES['cv']
-
+        
         try:
             # Validasi file extension
             if not cv.name.endswith('.pdf'):
@@ -360,7 +371,8 @@ def submit_application(request, proyek_id):
                 cv=cv,
                 kategori=proyek.kategori_proyek,
                 nama_proyek=proyek,
-                status='menunggu'
+                status='menunggu',
+                user=request.user  # Menambahkan user yang sedang login
             )
             lamar_proyek.save()
 
@@ -371,3 +383,25 @@ def submit_application(request, proyek_id):
             messages.error(request, e.message)
 
     return render(request, 'proyek-detail.html', {'proyek': proyek})
+
+@login_required
+def terima_pelamar(request, pelamar_id):
+    pelamar = get_object_or_404(LamarProyek, id=pelamar_id)
+    if pelamar.nama_proyek.user == request.user:
+        pelamar.status = 'diterima'
+        pelamar.save()
+        messages.success(request, 'Pelamar telah diterima.')
+    else:
+        messages.error(request, 'Anda tidak memiliki izin untuk melakukan tindakan ini.')
+    return redirect('proyek-pribadi-detail', proyek_id=pelamar.nama_proyek.id)
+
+@login_required
+def tolak_pelamar(request, pelamar_id):
+    pelamar = get_object_or_404(LamarProyek, id=pelamar_id)
+    if pelamar.nama_proyek.user == request.user:
+        pelamar.status = 'ditolak'
+        pelamar.save()
+        messages.success(request, 'Pelamar telah ditolak.')
+    else:
+        messages.error(request, 'Anda tidak memiliki izin untuk melakukan tindakan ini.')
+    return redirect('proyek-pribadi-detail', proyek_id=pelamar.nama_proyek.id)

@@ -101,48 +101,49 @@
     <!-- Causes Start -->
     <div class="container-fluid causes py-5">
       <div class="container py-5">
-        <div class="text-center mx-auto pb-5" style="max-width: 800px;">
-          <h5 class="text-uppercase text-primary">Proyek Yang Dilamar</h5>
-        </div>
-        <div class="row g-4">
-          {% for proyek in proyek_dilamar_list %}
-            <div class="col-lg-6 col-xl-3">
-              <div class="causes-item">
-                <div class="causes-img">
-                  <!-- CV Icon -->
-                  <i class="fas fa-file-pdf fa-3x"></i>
-                </div>
-                <div class="causes-content p-4">
-                  <span class="mb-3 badge text-bg-info">{{ proyek.get_kategori_display }}</span>
-                  <h4 class="mb-3">{{ proyek.nama_proyek }}</h4>
-                  <p class="mb-4">Status: {{ proyek.get_status_display }}</p>
-                  <a class="btn-hover-bg btn btn-primary text-white py-2 px-3" href="">Read More</a>
-                </div>
-              </div>
-            </div>
-          {% endfor %}
-        </div>
-        <nav aria-label="Page navigation example">
-          <ul class="pagination justify-content-center">
-            <li class="page-item">
-              <a class="page-link" href="#" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>
-            </li>
-            <li class="page-item">
-              <a class="page-link" href="#">1</a>
-            </li>
-            <li class="page-item">
-              <a class="page-link" href="#">2</a>
-            </li>
-            <li class="page-item">
-              <a class="page-link" href="#">3</a>
-            </li>
-            <li class="page-item">
-              <a class="page-link" href="#" aria-label="Next"><span aria-hidden="true">&raquo;</span></a>
-            </li>
-          </ul>
-        </nav>
+          <div class="text-center mx-auto pb-5" style="max-width: 800px;">
+              <h5 class="text-uppercase text-primary">Proyek Yang Dilamar</h5>
+          </div>
+          <div class="row g-4">
+              {% for proyek in page_obj %}
+                  <div class="col-lg-6 col-xl-3">
+                      <div class="causes-item">
+                          <div class="causes-img">
+                              <!-- CV Icon -->
+                              <i class="fas fa-file-pdf fa-3x"></i>
+                          </div>
+                          <div class="causes-content p-4">
+                              <span class="mb-3 badge text-bg-info">{{ proyek.get_kategori_display }}</span>
+                              <h4 class="mb-3">{{ proyek.nama_proyek }}</h4>
+                              <p class="mb-4">Status: {{ proyek.get_status_display }}</p>
+                              <a class="btn-hover-bg btn btn-primary text-white py-2 px-3" href="">Read More</a>
+                          </div>
+                      </div>
+                  </div>
+              {% endfor %}
+          </div>
+          <nav aria-label="Page navigation example">
+              <ul class="pagination justify-content-center mt-3">
+                  {% if page_obj.has_previous %}
+                      <li class="page-item">
+                          <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>
+                      </li>
+                  {% endif %}
+                  {% for num in page_obj.paginator.page_range %}
+                      <li class="page-item {% if page_obj.number == num %}active{% endif %}">
+                          <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                      </li>
+                  {% endfor %}
+                  {% if page_obj.has_next %}
+                      <li class="page-item">
+                          <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Next"><span aria-hidden="true">&raquo;</span></a>
+                      </li>
+                  {% endif %}
+              </ul>
+          </nav>
       </div>
-    </div>
+  </div>
+  
     <!-- Causes End -->
 
     <!-- Footer Start -->
