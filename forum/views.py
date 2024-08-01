@@ -27,7 +27,12 @@ def myprojects(request):
 @login_required
 def proyek_pribadi(request):
     user_projects = Proyek.objects.filter(user=request.user)
-    return render(request, 'proyek-pribadi.html', {'projects': user_projects})
+    paginator = Paginator(user_projects, 4)  # Show 4 projects per page
+
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    return render(request, 'proyek-pribadi.html', {'page_obj': page_obj})
 
 @login_required
 def proyek_pribadi_detail(request, proyek_id):
