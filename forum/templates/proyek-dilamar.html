@@ -116,7 +116,7 @@
                               <span class="mb-3 badge text-bg-info">{{ proyek.get_kategori_display }}</span>
                               <h4 class="mb-3">{{ proyek.nama_proyek }}</h4>
                               <p class="mb-4">Status: {{ proyek.get_status_display }}</p>
-                              <a class="btn-hover-bg btn btn-primary text-white py-2 px-3" href="">Read More</a>
+                              <a class="btn-hover-bg btn btn-danger text-white py-2 px-3" href="{% url 'delete_lamar_proyek' proyek.pk %}">Hapus</a>
                           </div>
                       </div>
                   </div>

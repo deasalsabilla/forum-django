@@ -273,6 +273,12 @@ def delete_comment(request):
         return JsonResponse({'success': True})
     return redirect('detail_post', post_id=post_id)
 
+@login_required
+def delete_lamar_proyek(request, pk):
+    proyek = get_object_or_404(LamarProyek, pk=pk)
+    proyek.delete()
+    messages.success(request, 'Proyek berhasil dihapus.')
+    return redirect('proyek-dilamar')  # Replace with your actual redirect URL
 
 @require_POST
 @login_required
